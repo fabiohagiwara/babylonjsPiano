@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <title>Babylon.js sample code</title>
+
+    <!-- Babylon.js -->
+    <script src="https://code.jquery.com/pep/0.4.2/pep.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.6.2/dat.gui.min.js"></script>
+    <script src="https://preview.babylonjs.com/ammo.js"></script>
+    <script src="https://preview.babylonjs.com/cannon.js"></script>
+    <script src="https://preview.babylonjs.com/Oimo.js"></script>
+    <script src="https://preview.babylonjs.com/earcut.min.js"></script>
+    <script src="https://preview.babylonjs.com/babylon.js"></script>
+    <script src="https://preview.babylonjs.com/materialsLibrary/babylonjs.materials.min.js"></script>
+    <script src="https://preview.babylonjs.com/proceduralTexturesLibrary/babylonjs.proceduralTextures.min.js"></script>
+    <script src="https://preview.babylonjs.com/postProcessesLibrary/babylonjs.postProcess.min.js"></script>
+    <script src="https://preview.babylonjs.com/loaders/babylonjs.loaders.js"></script>
+    <script src="https://preview.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>
+    <script src="https://preview.babylonjs.com/gui/babylon.gui.min.js"></script>
+    <script src="https://preview.babylonjs.com/inspector/babylon.inspector.bundle.js"></script>
+
+    <style>
+        html,
+        body {
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #renderCanvas {
+            width: 100%;
+            height: 100%;
+            touch-action: none;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="renderCanvas"></canvas>
+    <script>
+
+        var canvas = document.getElementById("renderCanvas");
+
+        var engine = null;
+        var scene = null;
+        var sceneToRender = null;
+        var createDefaultEngine = function () { return new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true, disableWebGL2Support: false }); };
+        var scene;
+        var notes = new Map();
+
+        var createScene = function () {
+            scene = new BABYLON.Scene(engine);
+
+            /**** Set camera and light *****/
+            const camera = new BABYLON.ArcRotateCamera("camera", -Math.PI / 2, Math.PI / 2.5, 10, new BABYLON.Vector3(0, 0, 0));
+            camera.attachControl(canvas, true);
+            const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(1, 1, 0));
+
+            managerEvents();
+
+            const boxMat = new BABYLON.StandardMaterial("boxMat");
+            boxMat.diffuseTexture = new BABYLON.Texture("piano.jpg");
+            const box = BABYLON.MeshBuilder.CreateBox("box", {wrap: true, height: 25, width:50, depth:0}, scene);
+            box.material = boxMat;
+            box.position.y = 5.5;
+            var inc = 2.7;
+            var posz = -0.6;
+            var poszp = 0.5;
+
+            //#region teclas brancas
+            const tecla1 = new Note("c3","assets/c3.mp3");
+            tecla1.box.position.z = posz;
+            tecla1.box.position.x = -18.6;
+            notes.set("c3",tecla1);
+
+            const tecla2 = new Note("d3","assets/d3.mp3");
+            tecla2.box.position.z = posz;
+            tecla2.box.position.x = -18.6 + inc;
+            notes.set("d3",tecla2);
+            inc += 2.7;
+
+            const tecla3 = new Note("e3","assets/e3.mp3");
+            tecla3.box.position.z = posz;
+            tecla3.box.position.x = -18.6 + inc;
+            notes.set("e3",tecla3);
+            inc += 2.7;
+
+            const tecla4 = new Note("f3","assets/f3.mp3");
+            tecla4.box.position.z = posz;
+            tecla4.box.position.x = -18.6 + inc;
+            notes.set("f3",tecla4);
+            inc += 2.7;
+
+            const tecla5 = new Note("g3","assets/g3.mp3");
+            tecla5.box.position.z = posz;
+            tecla5.box.position.x = -18.6 + inc;
+            notes.set("g3",tecla5);
+            inc += 2.7;
+
+            const tecla6 = new Note("a3","assets/a4.mp3");
+            tecla6.box.position.z = posz;
+            tecla6.box.position.x = -18.6 + inc;
+            notes.set("a3",tecla6);
+            inc += 2.7;
+
+            const tecla7 = new Note("b3","assets/b4.mp3");
+            tecla7.box.position.z = posz;
+            tecla7.box.position.x = -18.6 + inc;
+            notes.set("b3",tecla7);
+            inc += 2.7;
+
+            const tecla8 = new Note("c4","assets/c4.mp3");
+            tecla8.box.position.z = posz;
+            tecla8.box.position.x = -18.6 + inc;
+            notes.set("c4",tecla8);
+            inc += 2.7;
+
+            const tecla9 = new Note("d4","assets/d4.mp3");
+            tecla9.box.position.z = posz;
+            tecla9.box.position.x = -18.6 + inc;
+            notes.set("d4",tecla9);
+            inc += 2.7;
+
+            const tecla10 = new Note("e4","assets/e4.mp3");
+            tecla10.box.position.z = posz;
+            tecla10.box.position.x = -18.6 + inc;
+            notes.set("e4",tecla10);
+            inc += 2.7;
+
+            const tecla11 = new Note("f4","assets/f4.mp3");
+            tecla11.box.position.z = posz;
+            tecla11.box.position.x = -18.6 + inc;
+            notes.set("f4",tecla11);
+            inc += 2.7;
+
+            const tecla12 = new Note("g4","assets/g4.mp3");
+            tecla12.box.position.z = posz;
+            tecla12.box.position.x = -18.6 + inc;
+            notes.set("g4",tecla12);
+            inc += 2.7;
+
+            const tecla13 = new Note("a5","assets/a5.mp3");
+            tecla13.box.position.z = posz;
+            tecla13.box.position.x = -18.6 + inc;
+            notes.set("a5",tecla13);
+            inc += 2.7;
+
+            const tecla14 = new Note("b5","assets/b5.mp3");
+            tecla14.box.position.z = posz;
+            tecla14.box.position.x = -18.6 + inc;
+            notes.set("b5",tecla14);
+            inc += 2.7;
+
+            const tecla15 = new Note("c5","assets/c5.mp3");
+            tecla15.box.position.z = posz;
+            tecla15.box.position.x = -18.6 + inc;
+            notes.set("c5",tecla15);
+            //#endregion
+            
+            //#region  teclas pretas
+            const teclap1 = new NoteP("c-3","assets/c-3.mp3");
+            teclap1.box.position.z = posz - poszp;
+            teclap1.box.position.y = 2;
+            teclap1.box.position.x = -17.7;
+            notes.set("c-3",teclap1);
+
+            const teclap2 = new NoteP("d-3","assets/d-3.mp3");
+            teclap2.box.position.z = posz - poszp;
+            teclap2.box.position.y = 2;
+            teclap2.box.position.x = -14.5;
+            notes.set("d-3",teclap2);
+
+            const teclap3 = new NoteP("f-3","assets/f-3.mp3");
+            teclap3.box.position.z = posz - poszp;
+            teclap3.box.position.y = 2;
+            teclap3.box.position.x = -9.7;
+            notes.set("f-3",teclap3);
+
+            const teclap4 = new NoteP("g-3","assets/g-3.mp3");
+            teclap4.box.position.z = posz - poszp;
+            teclap4.box.position.y = 2;
+            teclap4.box.position.x = -6.7;
+            notes.set("g-3",teclap4);
+
+            const teclap5 = new NoteP("a-4","assets/a-4.mp3");
+            teclap5.box.position.z = posz - poszp;
+            teclap5.box.position.y = 2;
+            teclap5.box.position.x = -3.7;
+            notes.set("a-4",teclap5);
+
+            const teclap6 = new NoteP("c-4","assets/c-4.mp3");
+            teclap6.box.position.z = posz - poszp;
+            teclap6.box.position.y = 2;
+            teclap6.box.position.x = 1.1;
+            notes.set("c-4",teclap6);
+
+            const teclap7 = new NoteP("d-4","assets/d-4.mp3");
+            teclap7.box.position.z = posz - poszp;
+            teclap7.box.position.y = 2;
+            teclap7.box.position.x = 4.1;
+            notes.set("d-4",teclap7);
+
+            const teclap8 = new NoteP("f-4","assets/f-4.mp3");
+            teclap8.box.position.z = posz - poszp;
+            teclap8.box.position.y = 2;
+            teclap8.box.position.x = 9.1;
+            notes.set("f-4",teclap8);
+
+            const teclap9 = new NoteP("g-4","assets/g-4.mp3");
+            teclap9.box.position.z = posz - poszp;
+            teclap9.box.position.y = 2;
+            teclap9.box.position.x = 12.1;
+            notes.set("g-4",teclap9);
+
+            const teclap10 = new NoteP("a-5","assets/a-5.mp3");
+            teclap10.box.position.z = posz - poszp;
+            teclap10.box.position.y = 2;
+            teclap10.box.position.x = 15.1;
+            notes.set("a-5",teclap10);
+            //#endregion
+
+            scene.onKeyboardObservable.add((kbInfo) =>{
+                switch(kbInfo.type){
+                    case BABYLON.KeyboardEventTypes.KEYDOWN:
+                        switch(kbInfo.event.key){
+                            case "d":
+                                playSong();
+                        }
+                }
+            })
+
+            var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+
+            var text1 = new BABYLON.GUI.TextBlock();
+            text1.text = "Aperte 'D' para tocar uma música";
+            text1.color = "white";
+            text1.fontSize = 24;
+            text1.top = 350;
+            advancedTexture.addControl(text1);
+
+            return scene;
+        };
+
+        async function playSong(){
+            notes.get("e4").play();
+            await new Promise(p => setTimeout(p,500));
+            notes.get("c4").play();
+            await new Promise(p => setTimeout(p,500));
+            notes.get("d4").play();
+            await new Promise(p => setTimeout(p,500));
+            notes.get("e4").play();
+            await new Promise(p => setTimeout(p,300));
+            notes.get("c4").play();
+            await new Promise(p => setTimeout(p,900));
+            notes.get("c4").play();
+            await new Promise(p => setTimeout(p,250));
+            notes.get("g4").play();
+            await new Promise(p => setTimeout(p,250));
+            notes.get("f4").play();
+            await new Promise(p => setTimeout(p,250));
+            notes.get("e4").play();
+            await new Promise(p => setTimeout(p,250));
+            notes.get("d4").play();
+            await new Promise(p => setTimeout(p,250));
+            notes.get("e4").play();
+            await new Promise(p => setTimeout(p,500));
+            notes.get("c4").play();
+            await new Promise(p => setTimeout(p,500));
+            notes.get("d4").play();
+            await new Promise(p => setTimeout(p,500));
+            notes.get("e4").play();
+            await new Promise(p => setTimeout(p,300));
+            notes.get("c4").play();
+        }
+
+        function managerEvents() {
+
+            scene.onPointerDown = function (evt, pickResults) {
+                if (pickResults.hit) {
+                    notes.get(pickResults.pickedMesh.name).play();
+                    console.log(pickResults.pickedMesh.name);
+                }
+            }
+
+        }
+
+        function sleep(milliseconds) {
+            const date = Date.now();
+            let currentDate = null;
+            do {
+                currentDate = Date.now();
+            } while (currentDate - date < milliseconds);
+        }
+
+        initFunction = async function () {
+            var asyncEngineCreation = async function () {
+                try {
+                    return createDefaultEngine();
+                } catch (e) {
+                    console.log("the available createEngine function failed. Creating the default engine instead");
+                    return createDefaultEngine();
+                }
+            }
+
+            engine = await asyncEngineCreation();
+            if (!engine) throw 'engine should not be null.';
+            scene = createScene();
+        };
+        initFunction().then(() => {
+            sceneToRender = scene
+            engine.runRenderLoop(function () {
+                if (sceneToRender && sceneToRender.activeCamera) {
+                    sceneToRender.render();
+                }
+            });
+        });
+
+        // Resize
+        window.addEventListener("resize", function () {
+            engine.resize();
+        });
+
+
+        class Note {
+            constructor(noteName, noteUrl) {
+                this.ySlide = new BABYLON.Animation("ySlide", "position.z", 100, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+                let keyFrames = [];
+
+                keyFrames.push({
+                    frame: 0,
+                    value: -0.6
+                });
+
+                keyFrames.push({
+                    frame: 5,
+                    value: -0.2
+                });
+
+                keyFrames.push({
+                    frame: 10,
+                    value: -0.6
+                });
+
+                this.ySlide.setKeys(keyFrames);
+
+                // Load the sound, give it time to load and play it every 3 seconds
+                this.note = new BABYLON.Sound(noteName, noteUrl, scene);
+                this.box = BABYLON.MeshBuilder.CreateBox(noteName, {height:9,width:2.6});
+                
+            }
+
+            play() {
+                this.note.play();
+                scene.beginDirectAnimation(this.box, [this.ySlide], 0, 10, true);
+                const particleSystem = new BABYLON.ParticleSystem("particles", 2000);
+                particleSystem.particleTexture = new BABYLON.Texture("flare2.png");
+                particleSystem.emitter = this.box;
+                particleSystem.disposeOnStop = true;
+                particleSystem.updateSpeed = 0.01;
+                particleSystem.targetStopDuration = 3;
+                particleSystem.direction1 = new BABYLON.Vector3(0,0,-5);
+                particleSystem.start();
+            }
+
+        }
+
+        class NoteP {
+            constructor(noteName, noteUrl) {
+                this.ySlide = new BABYLON.Animation("ySlide", "position.z", 100, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+                let keyFrames = [];
+
+                keyFrames.push({
+                    frame: 0,
+                    value: -1.1
+                });
+
+                keyFrames.push({
+                    frame: 5,
+                    value: -0.8
+                });
+
+                keyFrames.push({
+                    frame: 10,
+                    value: -1.1
+                });
+
+                this.ySlide.setKeys(keyFrames);
+
+                // Load the sound, give it time to load and play it every 3 seconds
+                this.note = new BABYLON.Sound(noteName, noteUrl, scene);
+                const mat = new BABYLON.StandardMaterial("mat",scene);
+                mat.diffuseColor = new BABYLON.Color3(0,0,0);
+                this.box = BABYLON.MeshBuilder.CreateBox(noteName, {height:5.2,width:1.2});
+                this.box.material = mat;
+            }
+
+            play() {
+                this.note.play();
+                scene.beginDirectAnimation(this.box, [this.ySlide], 0, 10, true);
+                const particleSystem = new BABYLON.ParticleSystem("particles", 2000);
+                particleSystem.particleTexture = new BABYLON.Texture("flare3.jpg");
+                particleSystem.emitter = this.box;
+                particleSystem.disposeOnStop = true;
+                particleSystem.updateSpeed = 0.01;
+                particleSystem.targetStopDuration = 3;
+                particleSystem.direction1 = new BABYLON.Vector3(0,0,-5);
+                particleSystem.start();
+            }
+        }
+    </script>
+</body>
+
+</html>
